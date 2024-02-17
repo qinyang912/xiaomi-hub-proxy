@@ -1,0 +1,11 @@
+{
+  "domain": "xiaomi_hub_proxy",
+  "name": "Xiaomi Hub Proxy",
+  "codeowners": ["@qinyang912"],
+  "config_flow": true,
+  "dependencies": [],
+  "documentation": "https://www.example.com",
+  "iot_class": "cloud_polling",
+  "requirements": [],
+  "version": "0.0.1"
+}
