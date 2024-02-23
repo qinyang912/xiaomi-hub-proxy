@@ -1,4 +1,4 @@
-const { webpackModule } = require("./polyfill");
+const { webpackModule } = require("./polyfill")
 const varChange = require('./nodeTemplate/varChange')
 const deviceOutput = require('./nodeTemplate/deviceOutput')
 const deviceGetSetVar = require('./nodeTemplate/deviceGetSetVar')
@@ -38,7 +38,7 @@ async function createEmptyGraph() {
     "enable": true
   }
 
-  await await mainModule.kd.saveRule(
+  await mainModule.kd.saveRule(
     [],
     emptyGraph
   )

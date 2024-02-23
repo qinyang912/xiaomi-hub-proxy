@@ -7,6 +7,7 @@ const base64url = require('base64url').default
 const { RC4 } = require('./rc4')
 
 const SERVERS = ["cn", "de", "i2", "ru", "sg", "us"]
+exports.SERVERS = SERVERS
 
 const ACCESS_KEY = 'IOS00026747c5acafc2'
 
@@ -20,7 +21,6 @@ function getRandomString(length) {
 }
 
 function createSession() {
-  // TODO:  需要随机生成一个device id
   const deviceId = getRandomString(16)
   const jar = new CookieJar()
   jar.setCookieSync(
@@ -49,7 +49,7 @@ function generateNonce() {
   timeBytes.writeUInt32BE(currentTime, 0) // 将当前时间写入缓冲区，使用大端序
 
   const nonce = Buffer.concat([randomBytes, timeBytes]) // 将随机字节串和时间字节串拼接在一起
-  return base64url.encode(nonce) // 对拼接后的字节串进行 Base64 编码
+  return base64url.toBase64(base64url.encode(nonce)) // 对拼接后的字节串进行 Base64 编码
 }
 
 function generateSignedNonce(ssecret, nonce) {
@@ -92,7 +92,7 @@ function getBaseUrl(server) {
   return baseUrl
 }
 
-class MiCloud {
+class XiaomiCloud {
   /**
    * @param {string[]} servers
    */
@@ -192,6 +192,11 @@ class MiCloud {
     return cookies.find(cookie => cookie.key === 'serviceToken')?.value
   }
 
+  /**
+   * 获取登录验证码
+   * @param {string} did
+   * @returns {Promise<{passcode: string}>}
+   */
   async getHubPasscode(did) {
     const payload = {
       method: 'miIO.get_central_link_passcode',
@@ -289,4 +294,4 @@ class MiCloud {
   }
 }
 
-exports.MiCloud = MiCloud
+exports.XiaomiCloud = XiaomiCloud

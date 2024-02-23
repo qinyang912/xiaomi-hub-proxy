@@ -1,0 +1,4 @@
+{
+  "name": "gateway",
+  "main": "./index.js"
+}
