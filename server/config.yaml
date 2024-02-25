@@ -1,6 +1,6 @@
 name: "Xiaomi Hub Proxy"
 description: "add-on for xiaomi-hub-proxy integration"
-version: "0.0.3"
+version: "0.0.4"
 slug: "xiaomi_hub_proxy"
 init: false
 startup: services
