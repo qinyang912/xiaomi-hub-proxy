@@ -5,7 +5,8 @@ slug: "xiaomi_hub_proxy"
 init: false
 startup: services
 ports:
-  3000/tcp: 3000
+  # container-port/type: host-port
+  3000/tcp: 3003
 arch:
   - aarch64
   - amd64
