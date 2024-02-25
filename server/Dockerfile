@@ -1,4 +1,4 @@
-FROM node:21-alpine
+FROM node:18.4-alpine
 
 LABEL name="xiaomi-hub-proxy" \
   description="a proxy server for xiaomi hub" \
