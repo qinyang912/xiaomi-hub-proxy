@@ -1,12 +1,8 @@
 name: "Xiaomi Hub Proxy"
 description: "add-on for xiaomi-hub-proxy integration"
-version: "0.0.1"
+version: "0.0.2"
 slug: "xiaomi_hub_proxy"
 init: false
-arch:
-  - aarch64
-  - amd64
-  - armhf
-  - armv7
-  - i386
 startup: services
+ports:
+  3000/tcp: 3000
