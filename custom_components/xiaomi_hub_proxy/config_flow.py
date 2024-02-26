@@ -1,11 +1,13 @@
+import asyncio
 import homeassistant.helpers.config_validation as cv
 from homeassistant import config_entries
 from homeassistant.core import callback
-from homeassistant.data_entry_flow import FlowHandler
+from homeassistant.data_entry_flow import FlowHandler, FlowResult
 from homeassistant.helpers.aiohttp_client import async_create_clientsession
 
 from .core.const import DOMAIN
 from .core.hub_proxy import HubProxy
+from .core.hassio import HassIO
 
 import voluptuous as vol
 
@@ -53,14 +55,46 @@ def form(
 class XiaomiHubProxyFlow(config_entries.ConfigFlow, domain = DOMAIN):
   VERSION = 1
 
+  def __init__(self) -> None:
+    self.task_add_repository: asyncio.Task | None = None
+    self.task_fetch_addons: asyncio.Task | None = None
+
   @staticmethod
   @callback
   def async_get_options_flow(config_entry: config_entries.ConfigEntry) -> config_entries.OptionsFlow:
     return OptionsFlowHandler(config_entries)
 
   async def async_step_user(self, data=None):
+    return await self.async_step_add_repository()
+
+  async def async_step_add_repository(self, data=None) -> FlowResult:
+    """Add Repository"""
+    if not self.task_add_repository:
+      self.task_add_repository = self.hass.async_create_task(self._async_add_repository())
+      return self.async_show_progress(
+        step_id="add_repository",
+        progress_action="add_repository",
+      )
+
+    await self.task_add_repository
+
+    self.task_add_repository = None
+
+    return self.async_show_progress_done(next_step_id="account")
+
+  async def _async_add_repository(self) -> None:
+    session = async_create_clientsession(self.hass)
+    hassio = HassIO(session)
+    try:
+      await hassio.add_store_repository("https://github.com/qinyang912/xiaomi-hub-proxy")
+    finally:
+      self.hass.async_create_task(
+        self.hass.config_entries.flow.async_configure(flow_id=self.flow_id)
+      )
+
+  async def async_step_account(self, data=None):
     kwargs = {
-      "step_id": "user",
+      "step_id": "account",
       "schema": {
         vol.Required("username"): str,
         vol.Required("password"): str,
