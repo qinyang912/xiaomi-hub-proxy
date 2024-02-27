@@ -16,8 +16,21 @@ class HassIO:
     self._ip = os.environ.get("SUPERVISOR")
 
   async def add_store_repository(self, repository: str):
+    repositories = await self.send_command("/store/repositories", method="get")
+    target = [
+      item
+      for item in repositories["data"]
+      if item["source"] == repository
+    ]
+    if len(target) > 0:
+      return True
+
     result = await self.send_command("/store/repositories", payload={"repository": repository})
-    return result
+
+    if result["result"] == "ok":
+      return True
+
+    return False
 
   async def get_store_addons(self):
     result = await self.send_command("/store/addons", method="get")
