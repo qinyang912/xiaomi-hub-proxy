@@ -207,8 +207,12 @@ class XiaomiHubProxyFlow(config_entries.ConfigFlow, domain = DOMAIN):
     if data:
       if data["servers"]:
         session = async_create_clientsession(self.hass)
-        hubProxy = HubProxy(session)
-        await hubProxy.initHubProxy(data["username"], data["password"])
+        hubProxy = HubProxy(session, data["servers"])
+        token = await hubProxy.initHubProxy(data["username"], data["password"])
+        if token:
+          return self.async_create_entry(title=data["username"], data={**data, "hub_proxy_token": token})
+        else:
+          return self.async_abort(reason="xiaomi_account_init_error")
 
     return form(self, **kwargs)
 

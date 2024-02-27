@@ -8,7 +8,7 @@ from yarl import URL
 _LOGGER = logging.getLogger(__name__)
 
 class HassioAPIError(RuntimeError):
-  """Return if a API trow a error."""
+  """Return if a API throw a error."""
 
 class HassIO:
   def __init__(self, websession: aiohttp.ClientSession) -> None:

@@ -2,7 +2,8 @@
     "config": {
         "abort": {
             "addon_install_failed": "加载项安装失败",
-            "addon_start_failed": "加载项启动失败"
+            "addon_start_failed": "加载项启动失败",
+            "xiaomi_account_init_error": "小米账号/密码有误"
         },
         "progress": {
             "add_repository": "正在将 https://github.com/qinyang912/xiaomi-hub-proxy 添加到加载项商店的仓库里",
