@@ -197,6 +197,9 @@ class Graph {
       const { did, urn } = device
       const deviceConfig = this.deviceConfigMap[did]
 
+      // 设备的属性分propertyGet和propertySet, 如果在propertyGet但是没在propertySet, 说明是只读属性
+      // TODO: 如果属性值有变化，就同步到设备，这个属性只能从propertySet获取，因为只有这里的属性才是可配置属性
+      // TODO: 每10s钟从设备同步过来的属性，可以从propertyGet获取，这里的属性都是可读属性，而这里的属性的值可以同步给home assistant
       deviceConfig.propertyGet.forEach((property) => {
         const operator = getOperator(property)
         if (operator === '=') {

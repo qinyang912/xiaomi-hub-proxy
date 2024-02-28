@@ -1,7 +1,7 @@
 globalThis.self = globalThis;
 globalThis.crypto = require("node:crypto");
 const LocalStorage = require('node-localstorage').LocalStorage;
-const localStorage = new LocalStorage('./scratch');
+const localStorage = new LocalStorage('./.data/scratch');
 const WebSocket = require("ws");
 globalThis.WebSocket = WebSocket;
 globalThis.localStorage = localStorage

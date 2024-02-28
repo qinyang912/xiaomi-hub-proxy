@@ -5,6 +5,7 @@ const moduleId = 60936
 
 const mainModule = webpackModule.resolve(moduleId)
 
+// TODO: 后面可以尝试使用 https://www.npmjs.com/package/comlink 把gateway放到Worker里，解决mainModule.kd无法在多个gateway同时共享的问题
 class Gateway {
   /**
    * @param {{host: string, did: string, xiaomiAccount: { username: string, password: string, servers: string[] }}} options
