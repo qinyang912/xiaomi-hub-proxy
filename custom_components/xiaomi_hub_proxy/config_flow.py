@@ -78,6 +78,8 @@ class XiaomiHubProxyFlow(config_entries.ConfigFlow, domain = DOMAIN):
     self.task_add_repository: asyncio.Task | None = None
     self.task_start_addon: asyncio.Task | None = None
     self.task_install_addon: asyncio.Task | None = None
+    self.xiaomi_account = None
+    self.hubProxy = None
 
   @staticmethod
   @callback
@@ -210,11 +212,42 @@ class XiaomiHubProxyFlow(config_entries.ConfigFlow, domain = DOMAIN):
         hubProxy = HubProxy(session, data["servers"])
         token = await hubProxy.initHubProxy(data["username"], data["password"])
         if token:
-          return self.async_create_entry(title=data["username"], data={**data, "hub_proxy_token": token})
+          data.update({"hub_proxy_token": token})
+          self.xiaomi_account = data
+          self.hubProxy = hubProxy
+          return await self.async_step_init_gateway()
         else:
           return self.async_abort(reason="xiaomi_account_init_error")
 
     return form(self, **kwargs)
+
+  async def async_step_init_gateway(self, data=None) -> FlowResult:
+    if data is not None:
+      return self.async_create_entry(
+        title=self.xiaomi_account["username"],
+        data={
+          **self.xiaomi_account,
+          "gatewayDid": data["gateway"],
+        }
+      )
+
+    gateway_list = await self.hubProxy.get_gateway_list()
+
+    actions = {
+      item["did"]: item["localip"]
+      for item in gateway_list
+    }
+
+    if len(actions) == 0:
+      return self.async_abort(reason="gateway_list_empty")
+
+    return self.async_show_form(
+      step_id="init_gateway",
+      data_schema=vol.Schema({
+        vol.Required("gateway", default=gateway_list[0]["did"]): vol.In(actions)
+      }),
+    )
+
 
 class OptionsFlowHandler(config_entries.OptionsFlow):
   def __init__(self, config_entry: config_entries.ConfigEntry):

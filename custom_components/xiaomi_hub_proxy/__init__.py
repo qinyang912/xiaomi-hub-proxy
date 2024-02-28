@@ -15,6 +15,18 @@ from .core.hub_proxy import HubProxy
 
 _LOGGER = logging.getLogger(__name__)
 
+PLATFORMS = [
+  # "alarm_control_panel",
+  # "binary_sensor",
+  # "climate",
+  # "cover",
+  "light",
+  # "number",
+  # "select",
+  # "sensor",
+  # "switch",
+]
+
 async def async_setup(hass: HomeAssistant, config: dict):
   hass.data[DOMAIN] = {}
   return True
@@ -22,7 +34,7 @@ async def async_setup(hass: HomeAssistant, config: dict):
 async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry):
   data: dict = config_entry.data.copy()
 
-  store = Store(hass, 1, f"{DOMAIN}/{data["username"]}.json")
+  store = Store(hass, 1, f"{DOMAIN}/{data['username']}.json")
   devices = await store.async_load()
 
   if devices:
@@ -34,7 +46,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry):
 
   if "hub_proxy_token" in data:
     hubProxy.token = data["hub_proxy_token"]
-    devices = await hubProxy.get_devices()
+    devices = await hubProxy.get_devices(data["gatewayDid"])
   else:
     devices = None
 
@@ -65,6 +77,8 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry):
     hass.data[DOMAIN]["devices"] += devices
 
   _update_devices(devices)
+
+  await hass.config_entries.async_forward_entry_setups(config_entry, PLATFORMS)
 
   return True
 

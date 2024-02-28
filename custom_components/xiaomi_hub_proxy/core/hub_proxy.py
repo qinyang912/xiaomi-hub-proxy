@@ -38,8 +38,12 @@ class HubProxy:
 
     return False
 
-  async def get_devices(self):
-    result = await self.request('/devices', method="get")
+  async def get_devices(self, gatewayDid: str):
+    result = await self.request(f"/devices?gatewayDid={gatewayDid}", method="get")
+    return result
+
+  async def get_gateway_list(self):
+    result = await self.request('/gateway/list', method="get")
     return result
 
   async def request(
